@@ -47,7 +47,8 @@ namespace MDPro3
 
         public void OnSolo()
         {
-            Program.I().ShiftToServant(Program.I().solo);
+            //Program.I().ShiftToServant(Program.I().solo);
+            Program.I().solo.StartAI(4);
         }
         public void OnOnline()
         {

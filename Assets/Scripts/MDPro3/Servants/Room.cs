@@ -875,14 +875,15 @@ namespace MDPro3
             //DOTween.To(() => cg.alpha, x => cg.alpha = x, 0, transitionTime);
             if (soloLockHand || Config.Get("AutoRPS", "0") == "0")
             {
-                var handle = Addressables.InstantiateAsync("PopupRockPaperScissors");
-                handle.Completed += (result) =>
-                {
-                    result.Result.transform.SetParent(Program.I().ui_.popup, false);
-                    var popupRPS = result.Result.GetComponent<PopupRockPaperScissors>();
-                    popupRPS.selections = new List<string> { InterString.Get("²ÂÈ­") };
-                    popupRPS.Show();
-                };
+                // var handle = Addressables.InstantiateAsync("PopupRockPaperScissors");
+                // handle.Completed += (result) =>
+                // {
+                //     result.Result.transform.SetParent(Program.I().ui_.popup, false);
+                //     var popupRPS = result.Result.GetComponent<PopupRockPaperScissors>();
+                //     popupRPS.selections = new List<string> { InterString.Get("²ÂÈ­") };
+                //     popupRPS.Show();
+                // };
+                TcpHelper.CtosMessage_HandResult(3);
             }
             else
                 TcpHelper.CtosMessage_HandResult(UnityEngine.Random.Range(1, 4));
@@ -912,12 +913,12 @@ namespace MDPro3
 
             int meResult = r.ReadByte();
             int opResult = r.ReadByte();
-            if (meResult == opResult)
-                MessageManager.Cast(InterString.Get("²ÂÈ­Æ½¾Ö¡£"));
-            else if (meResult == 1 && opResult == 2
-                || meResult == 2 && opResult == 3
-                || meResult == 3 && opResult == 1)
-                MessageManager.Cast(InterString.Get("²ÂÈ­Âä°Ü¡£"));
+            // if (meResult == opResult)
+            //     MessageManager.Cast(InterString.Get("²ÂÈ­Æ½¾Ö¡£"));
+            // else if (meResult == 1 && opResult == 2
+            //     || meResult == 2 && opResult == 3
+            //     || meResult == 3 && opResult == 1)
+            //     MessageManager.Cast(InterString.Get("²ÂÈ­Âä°Ü¡£"));
         }
         public void StocMessage_TpResult(BinaryReader r)
         {
@@ -961,7 +962,18 @@ namespace MDPro3
 
             for (int i = 0; i < 4; i++)
                 players[i] = null;
-            Program.I().ShiftToServant(Program.I().room);
+            //Program.I().ShiftToServant(Program.I().room);
+            Program.I().ocgcore.handler = Handler;
+            deckName.text = Config.Get("DeckInUse", "@ui");
+            if(File.Exists("Deck/" + deckName.text + ".ydk"))
+                deck = new Deck("Deck/" + deckName.text + ".ydk");
+            else
+            {
+                deck = null;
+                deckName.text = InterString.Get("Çëµã»÷´Ë´¦Ñ¡Ôñ¿¨×é");
+            }
+
+            StartCoroutine(RefreshAsync());
         }
         public void StocMessage_TypeChange(BinaryReader r)
         {
@@ -1047,6 +1059,10 @@ namespace MDPro3
                     observerCount++;
                 }
                 Realize();
+            }
+            if(pos ==1 ){
+                OnReady();
+                OnStart();
             }
         }
 

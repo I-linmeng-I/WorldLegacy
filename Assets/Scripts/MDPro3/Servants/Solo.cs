@@ -146,7 +146,7 @@ namespace MDPro3
         {
             SelectDeck.state = SelectDeck.State.ForSolo;
             Program.I().selectDeck.depth = 3;
-            Program.I().selectDeck.returnServant = this;
+            Program.I().selectDeck.returnServant = Program.I().menu;
             Program.I().ShiftToServant(Program.I().selectDeck);
         }
 
