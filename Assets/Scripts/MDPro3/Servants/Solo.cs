@@ -20,9 +20,6 @@ namespace MDPro3
         public SuperScrollViewTwoStage superScrollView;
         List<string[]> tasks = new List<string[]>();
 
-        public UnityEngine.UI.Toggle toggleLockHand;
-        public UnityEngine.UI.Toggle toggleNoCheck;
-        public UnityEngine.UI.Toggle toggleNoShuffle;
         public InputField inputPort;
         public InputField inputLP;
         public InputField inputHand;
@@ -172,7 +169,7 @@ namespace MDPro3
                 if (command != string.Empty)
                     aiCommand = command;
             }
-            Launch(aiCommand, toggleLockHand.isOn, toggleNoCheck.isOn, toggleNoShuffle.isOn);
+            Launch(aiCommand, true, true, true);
         }
 
         private string GetRandomBot(string flag)
