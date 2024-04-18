@@ -9,11 +9,7 @@ namespace MDPro3
     {
         public static void ImportFiles()
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            NativeFilePicker.PickMultipleFiles(MoveFilesToGame, null);
-#else
-            ChooseFiles();
-#endif
+
         }
 
         public static void ExportAllDecks()
