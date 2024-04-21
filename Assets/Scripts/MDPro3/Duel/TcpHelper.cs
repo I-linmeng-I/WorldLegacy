@@ -8,6 +8,7 @@ using UnityEngine;
 using MDPro3.YGOSharp;
 using MDPro3.YGOSharp.Network.Enums;
 using MDPro3.YGOSharp.OCGWrapper.Enums;
+using static MDPro3.Room;
 
 namespace MDPro3
 {
@@ -301,6 +302,23 @@ namespace MDPro3
 
             for (var i = 0; i < deckFor.Extra.Count; i++) message.Data.writer.Write(deckFor.Extra[i]);
             for (var i = 0; i < deckFor.Side.Count; i++) message.Data.writer.Write(deckFor.Side[i]);
+            Send(message);
+        }
+
+        public static void CtosMessage_LoadPuzzle(List<puzzle_pointer> puzzles)
+        {
+            var message = new Package();
+            message.Function = (int)CtosMessage.LoadPuzzle;
+            message.Data.writer.Write(puzzles.Count);
+            for(var i = 0; i < puzzles.Count; i++){
+                message.Data.writer.Write(puzzles[i].code);
+                message.Data.writer.Write(puzzles[i].location);
+                message.Data.writer.Write(puzzles[i].sequence);
+                message.Data.writer.Write(puzzles[i].position);
+                message.Data.writer.Write(puzzles[i].owner);
+                message.Data.writer.Write(puzzles[i].playerid);
+                message.Data.writer.Write(puzzles[i].proc);
+            }
             Send(message);
         }
 

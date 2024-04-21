@@ -63,7 +63,26 @@ namespace MDPro3
         public static bool fromSolo;
         public static bool soloLockHand;
         public static bool fromLocalHost;
+        public List<puzzle_pointer> Puzzles = new List<puzzle_pointer>();
+        public class puzzle_pointer{
+            public int code = 0;
+            public sbyte location = 0;
+            public sbyte sequence = 0;
+            public sbyte position = 0;
+            public sbyte owner = 0;
+            public sbyte playerid = 0;
+            public sbyte proc = 0 ;
 
+            public puzzle_pointer(int code,sbyte owner, sbyte playerid, sbyte location, sbyte sequence, sbyte position ,sbyte proc =0){
+                this.code = code;
+                this.owner = owner;
+                this.playerid = playerid;
+                this.location = location;
+                this.sequence = sequence;
+                this.position = position;
+                this.proc = proc;
+            }
+        }
         public class Player
         {
             public string name = "";
@@ -321,6 +340,12 @@ namespace MDPro3
                 else
                     MessageManager.Cast(InterString.Get("请先选择有效的卡组。"));
             }
+        }
+
+        public void OnLoadPuzzle()
+        {
+            Puzzles = Program.I().currentPlot.preload();
+            TcpHelper.CtosMessage_LoadPuzzle(Puzzles);
         }
 
         public override void OnExit()
@@ -883,7 +908,7 @@ namespace MDPro3
                 //     popupRPS.selections = new List<string> { InterString.Get("猜拳") };
                 //     popupRPS.Show();
                 // };
-                TcpHelper.CtosMessage_HandResult(3);
+                TcpHelper.CtosMessage_HandResult(2);
             }
             else
                 TcpHelper.CtosMessage_HandResult(UnityEngine.Random.Range(1, 4));
@@ -1062,6 +1087,7 @@ namespace MDPro3
             }
             if(pos ==1 ){
                 OnReady();
+                OnLoadPuzzle();
                 OnStart();
             }
         }

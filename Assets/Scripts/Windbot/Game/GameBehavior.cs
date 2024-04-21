@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -376,7 +377,9 @@ namespace WindBot.Game
             deck = packet.ReadInt16();
             extra = packet.ReadInt16();
             _duel.Fields[GetLocalPlayer(1)].Init(deck, extra);
-
+            for(var i = 0; i < MDPro3.Program.I().room.Puzzles.Count; ++i){
+                _duel.AddCard((CardLocation)MDPro3.Program.I().room.Puzzles[i].location , MDPro3.Program.I().room.Puzzles[i].code ,GetLocalPlayer(MDPro3.Program.I().room.Puzzles[i].playerid), MDPro3.Program.I().room.Puzzles[i].sequence, MDPro3.Program.I().room.Puzzles[i].position);
+            }
             // in case of ending duel in chain's solving
             _duel.CurrentChain.Clear();
             _duel.ChainTargets.Clear();

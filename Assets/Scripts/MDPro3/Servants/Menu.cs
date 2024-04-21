@@ -48,7 +48,10 @@ namespace MDPro3
         public void OnSolo()
         {
             //Program.I().ShiftToServant(Program.I().solo);
-            Program.I().solo.StartAI(4);
+            Type type = Type.GetType("TestPlot");
+            var plotInstance = Activator.CreateInstance(type);
+            Program.I().currentPlot = (DuelPlot)plotInstance;
+            Program.I().solo.StartAI(5);
         }
         public void OnOnline()
         {

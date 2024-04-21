@@ -1745,6 +1745,7 @@ namespace MDPro3
                     GCS_CreateBundle(r.ReadInt16(), LocalPlayer(0), CardLocation.Extra);
                     GCS_CreateBundle(r.ReadInt16(), LocalPlayer(1), CardLocation.Deck);
                     GCS_CreateBundle(r.ReadInt16(), LocalPlayer(1), CardLocation.Extra);
+                    GCS_PreLoadPuzzle();
                     ArrangeCards();
                     RefreshBgState();
                     SetLP(0, 0, true);
@@ -4904,6 +4905,28 @@ namespace MDPro3
                     position = (int)CardPosition.FaceDownAttack,
                     sequence = (uint)i
                 });
+            }
+        }
+        private void GCS_PreLoadPuzzle()
+        {
+            for (var i = 0; i < Program.I().room.Puzzles.Count; ++i)
+            {
+                GameCard card;
+                GCS_Create(new GPS
+                {
+                    controller = (uint)LocalPlayer(Program.I().room.Puzzles[i].playerid),
+                    location = (uint)Program.I().room.Puzzles[i].location,
+                    position = (int)Program.I().room.Puzzles[i].position,
+                    sequence = (uint)Program.I().room.Puzzles[i].sequence
+                });
+                GPS from = new GPS{
+                    controller = (uint)LocalPlayer(Program.I().room.Puzzles[i].playerid),
+                    location = (uint)Program.I().room.Puzzles[i].location,
+                    position = (int)Program.I().room.Puzzles[i].position,
+                    sequence = (uint)Program.I().room.Puzzles[i].sequence
+                };
+                card = GCS_Get(from);
+                card.Move(from);
             }
         }
         private List<GameCard> GCS_ResizeBundle(int count, int player, CardLocation location)

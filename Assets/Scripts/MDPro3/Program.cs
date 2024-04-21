@@ -25,6 +25,7 @@ namespace MDPro3
         public TextureManager texture_;
         public MessageManager message_;
         public TimeLineManager timeline_;
+        public DuelPlot currentPlot;
 
         [Header("Servants")]
         public Menu menu;

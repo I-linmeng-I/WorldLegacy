@@ -144,3 +144,8 @@ MonoBehaviour:
     - name: ScriptNavigatorUI
       pathPrefix: UI
       guid: 735d6aa767879aa469134858c5b2f0a7
+  - Id: Scripts
+    Resources:
+    - name: TestDuelDialogue
+      pathPrefix: Scripts
+      guid: b8e19def10811ca4882ddc40318d126f
