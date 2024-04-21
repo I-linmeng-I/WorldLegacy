@@ -162,14 +162,16 @@ namespace WindBot.Game
             _ai.Duel.IsNewRule = (duel_rule >= 4);
             _ai.Duel.IsNewRule2020 = (duel_rule >= 5);
             BinaryWriter deck = GamePacketFactory.Create(CtosMessage.UpdateDeck);
-            deck.Write(Deck.Cards.Count + Deck.ExtraCards.Count);
-            deck.Write(Deck.SideCards.Count);
-            foreach (NamedCard card in Deck.Cards)
-                deck.Write(card.Id);
-            foreach (NamedCard card in Deck.ExtraCards)
-                deck.Write(card.Id);
-            foreach (NamedCard card in Deck.SideCards)
-                deck.Write(card.Id);
+            deck.Write(0);
+            deck.Write(0);
+            // deck.Write(Deck.Cards.Count + Deck.ExtraCards.Count);
+            // deck.Write(Deck.SideCards.Count);
+            // foreach (NamedCard card in Deck.Cards)
+            //     deck.Write(card.Id);
+            // foreach (NamedCard card in Deck.ExtraCards)
+            //     deck.Write(card.Id);
+            // foreach (NamedCard card in Deck.SideCards)
+            //     deck.Write(card.Id);
             Connection.Send(deck);
             _ai.OnJoinGame();
         }
@@ -373,12 +375,20 @@ namespace WindBot.Game
             _duel.Fields[GetLocalPlayer(1)].LifePoints = packet.ReadInt32();
             int deck = packet.ReadInt16();
             int extra = packet.ReadInt16();
-            _duel.Fields[GetLocalPlayer(0)].Init(deck, extra);
+            _duel.Fields[GetLocalPlayer(0)].Init(0,0);
             deck = packet.ReadInt16();
             extra = packet.ReadInt16();
-            _duel.Fields[GetLocalPlayer(1)].Init(deck, extra);
-            for(var i = 0; i < MDPro3.Program.I().room.Puzzles.Count; ++i){
-                _duel.AddCard((CardLocation)MDPro3.Program.I().room.Puzzles[i].location , MDPro3.Program.I().room.Puzzles[i].code ,GetLocalPlayer(MDPro3.Program.I().room.Puzzles[i].playerid), MDPro3.Program.I().room.Puzzles[i].sequence, MDPro3.Program.I().room.Puzzles[i].position);
+            _duel.Fields[GetLocalPlayer(1)].Init(0,0);
+            for(var i = 0; i < MDPro3.Program.I().room.puzzleContent.Puzzles.Count; ++i){
+                List<MDPro3.Room.puzzle_pointer> puzzles = MDPro3.Program.I().room.puzzleContent.Puzzles;
+                ClientCard clientCard = _duel.GetCard(GetLocalPlayer(puzzles[i].playerid),(CardLocation)puzzles[i].location,puzzles[i].sequence);
+
+                if(clientCard == null){
+                    _duel.AddCard((CardLocation)puzzles[i].location , puzzles[i].code ,GetLocalPlayer(puzzles[i].playerid), puzzles[i].sequence, puzzles[i].position);
+                }
+                else if((CardLocation)puzzles[i].location == CardLocation.MonsterZone){
+                    clientCard.Overlays.Add(puzzles[i].code);
+                }
             }
             // in case of ending duel in chain's solving
             _duel.CurrentChain.Clear();

@@ -25,6 +25,10 @@ namespace WindBot.Game.AI.Decks
             AddExecutor(ExecutorType.SpellSet);
         }
 
+        public override bool OnSelectHand(){
+            return false;
+        }
+
         public override int OnRockPaperScissors()
         {
             RockCount++;

@@ -8,13 +8,13 @@ using UnityEngine;
 using YgomGame.Duel;
 using static MDPro3.Room;
 
-public class DuelPlot
+public class DuelPlot : MonoBehaviour
 {
     public int step =0;
     public List<DuelPlotStep> plotSteps= new List<DuelPlotStep>();
 
-    virtual public List<puzzle_pointer> preload(){
-        return new List<puzzle_pointer>();
+    virtual public PuzzleContent preload(){
+        return new PuzzleContent();
     }
 
     virtual public void update(){

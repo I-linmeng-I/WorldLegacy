@@ -63,7 +63,13 @@ namespace MDPro3
         public static bool fromSolo;
         public static bool soloLockHand;
         public static bool fromLocalHost;
-        public List<puzzle_pointer> Puzzles = new List<puzzle_pointer>();
+        public PuzzleContent puzzleContent = new PuzzleContent();
+        public class PuzzleContent{
+            public int player1LifePoint = 8000;
+            public int player2LifePoint = 8000;
+            public sbyte attackable = 0;
+            public List<puzzle_pointer> Puzzles = new List<puzzle_pointer>();
+        }
         public class puzzle_pointer{
             public int code = 0;
             public sbyte location = 0;
@@ -332,20 +338,22 @@ namespace MDPro3
                 TcpHelper.CtosMessage_HsNotReady();
             else
             {
-                if (File.Exists("Deck/" + Config.Get("DeckInUse", "") + ".ydk"))
-                {
-                    TcpHelper.CtosMessage_UpdateDeck(new Deck("Deck/" + Config.Get("DeckInUse", "") + ".ydk"));
-                    TcpHelper.CtosMessage_HsReady();
-                }
-                else
-                    MessageManager.Cast(InterString.Get("请先选择有效的卡组。"));
+                TcpHelper.CtosMessage_UpdateDeck(new Deck());
+                TcpHelper.CtosMessage_HsReady();
+                // if (File.Exists("Deck/" + Config.Get("DeckInUse", "") + ".ydk"))
+                // {
+                //     TcpHelper.CtosMessage_UpdateDeck(new Deck("Deck/" + Config.Get("DeckInUse", "") + ".ydk"));
+                //     TcpHelper.CtosMessage_HsReady();
+                // }
+                // else
+                //     MessageManager.Cast(InterString.Get("请先选择有效的卡组。"));
             }
         }
 
         public void OnLoadPuzzle()
         {
-            Puzzles = Program.I().currentPlot.preload();
-            TcpHelper.CtosMessage_LoadPuzzle(Puzzles);
+            puzzleContent = Program.I().currentPlot.preload();
+            TcpHelper.CtosMessage_LoadPuzzle();
         }
 
         public override void OnExit()
@@ -908,7 +916,7 @@ namespace MDPro3
                 //     popupRPS.selections = new List<string> { InterString.Get("猜拳") };
                 //     popupRPS.Show();
                 // };
-                TcpHelper.CtosMessage_HandResult(2);
+                TcpHelper.CtosMessage_HandResult(3);
             }
             else
                 TcpHelper.CtosMessage_HandResult(UnityEngine.Random.Range(1, 4));

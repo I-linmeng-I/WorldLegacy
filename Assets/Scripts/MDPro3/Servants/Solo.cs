@@ -203,9 +203,9 @@ namespace MDPro3
             string lp = inputLP.text;
             if (string.IsNullOrEmpty(lp) /*|| lp == "0"*/)
                 lp = "8000";
-            string hand = inputHand.text;
+            string hand = "0";
             if (string.IsNullOrEmpty(hand) /*|| hand == "0"*/)
-                hand = "5";
+                hand = "0";
             string draw = inputDraw.text;
             if (string.IsNullOrEmpty(draw) /*|| draw == "0"*/)
                 draw = "5";

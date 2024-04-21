@@ -1745,7 +1745,6 @@ namespace MDPro3
                     GCS_CreateBundle(r.ReadInt16(), LocalPlayer(0), CardLocation.Extra);
                     GCS_CreateBundle(r.ReadInt16(), LocalPlayer(1), CardLocation.Deck);
                     GCS_CreateBundle(r.ReadInt16(), LocalPlayer(1), CardLocation.Extra);
-                    GCS_PreLoadPuzzle();
                     ArrangeCards();
                     RefreshBgState();
                     SetLP(0, 0, true);
@@ -1768,6 +1767,7 @@ namespace MDPro3
                                 cg.interactable = true;
                                 messagePass = true;
                                 AudioManager.PlayBGMNormal(field1.name);
+                                GCS_PreLoadPuzzle();
                             };
                         };
                     });
@@ -4909,24 +4909,38 @@ namespace MDPro3
         }
         private void GCS_PreLoadPuzzle()
         {
-            for (var i = 0; i < Program.I().room.Puzzles.Count; ++i)
+            for (var i = 0; i < Program.I().room.puzzleContent.Puzzles.Count; ++i)
             {
                 GameCard card;
-                GCS_Create(new GPS
-                {
-                    controller = (uint)LocalPlayer(Program.I().room.Puzzles[i].playerid),
-                    location = (uint)Program.I().room.Puzzles[i].location,
-                    position = (int)Program.I().room.Puzzles[i].position,
-                    sequence = (uint)Program.I().room.Puzzles[i].sequence
-                });
-                GPS from = new GPS{
-                    controller = (uint)LocalPlayer(Program.I().room.Puzzles[i].playerid),
-                    location = (uint)Program.I().room.Puzzles[i].location,
-                    position = (int)Program.I().room.Puzzles[i].position,
-                    sequence = (uint)Program.I().room.Puzzles[i].sequence
+                GPS p = new GPS{
+                    controller = (uint)LocalPlayer(Program.I().room.puzzleContent.Puzzles[i].playerid),
+                    location = (uint)Program.I().room.puzzleContent.Puzzles[i].location,
+                    position = (int)Program.I().room.puzzleContent.Puzzles[i].position,
+                    sequence = (uint)Program.I().room.puzzleContent.Puzzles[i].sequence
                 };
-                card = GCS_Get(from);
-                card.Move(from);
+                card = GCS_Get(p);
+                if(card == null){
+                    GCS_Create(p);
+                    card = GCS_Get(p);
+                    card.Move(p);
+                    card.SetData(Card.Get(Program.I().room.puzzleContent.Puzzles[i].code));
+                }
+                else if(card.p.location == (uint)CardLocation.MonsterZone){
+                    GameCard overlay = GCS_Create(new GPS{
+                        controller = (uint)LocalPlayer(Program.I().room.puzzleContent.Puzzles[i].playerid),
+                        location = (uint)CardLocation.Overlay | (uint)CardLocation.MonsterZone,
+                        position = (int)Program.I().room.puzzleContent.Puzzles[i].position,
+                        sequence = 0
+                    });
+                    overlay.overlayParent = card;
+                    overlay.Move(new GPS{
+                        controller = (uint)LocalPlayer(Program.I().room.puzzleContent.Puzzles[i].playerid),
+                        location = (uint)CardLocation.Overlay | (uint)CardLocation.MonsterZone,
+                        position = (int)Program.I().room.puzzleContent.Puzzles[i].position,
+                        sequence = 2
+                    });
+                    overlay.SetData(Card.Get(Program.I().room.puzzleContent.Puzzles[i].code));
+                }
             }
         }
         private List<GameCard> GCS_ResizeBundle(int count, int player, CardLocation location)

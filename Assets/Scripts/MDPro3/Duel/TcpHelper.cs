@@ -305,10 +305,14 @@ namespace MDPro3
             Send(message);
         }
 
-        public static void CtosMessage_LoadPuzzle(List<puzzle_pointer> puzzles)
+        public static void CtosMessage_LoadPuzzle()
         {
             var message = new Package();
+            List<puzzle_pointer> puzzles = Program.I().room.puzzleContent.Puzzles;
             message.Function = (int)CtosMessage.LoadPuzzle;
+            message.Data.writer.Write(Program.I().room.puzzleContent.player1LifePoint);
+            message.Data.writer.Write(Program.I().room.puzzleContent.player2LifePoint);
+            message.Data.writer.Write(Program.I().room.puzzleContent.attackable);
             message.Data.writer.Write(puzzles.Count);
             for(var i = 0; i < puzzles.Count; i++){
                 message.Data.writer.Write(puzzles[i].code);
