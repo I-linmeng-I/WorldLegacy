@@ -1,14 +1,18 @@
 using MDPro3;
 using Naninovel;
+using Naninovel.Commands;
+using System;
+using System.Threading;
+using UnityEditor.VersionControl;
 using UnityEngine;
+using static Naninovel.Command;
 
-[CommandAlias("novel")]
-public class SwitchToNovelMode : Command
+[CommandAlias("hello")]
+public class HelloWorld : Command
 {
-    public StringParameter ScriptName;
-    public StringParameter Label;
+    public StringParameter Name;
 
-    public override async UniTask Execute (AsyncToken asyncToken = default)
+    public override UniTask Execute(AsyncToken asyncToken = default)
     {
         // // 1. Disable character control.
         // var controller = Object.FindObjectOfType<CharacterController3D>();
@@ -18,18 +22,18 @@ public class SwitchToNovelMode : Command
         // var advCamera = GameObject.Find("AdventureModeCamera").GetComponent<Camera>();
         // advCamera.enabled = false;
         var naniCamera = Engine.GetService<ICameraManager>().Camera;
-        naniCamera.enabled = true;
+        naniCamera.enabled = false;
 
-        // 3. Load and play specified script (if assigned).
-        if (Assigned(ScriptName))
-        {
-            var scriptPlayer = Engine.GetService<IScriptPlayer>();
-            await scriptPlayer.PreloadAndPlayAsync(ScriptName, label: Label);
-        }
+        Type type = Type.GetType("TestPlot");
+        var plotInstance = Activator.CreateInstance(type);
+        Program.I().currentDuelPlot = (DuelPlot)plotInstance;
+        Program.I().solo.StartAI(5);
 
         // // 4. Enable Naninovel input.
         // Program.I().gameObject.GetComponent<InputManager>().ProcessInput = false;
         // var inputManager = Engine.GetService<IInputManager>();
         // inputManager.ProcessInput = true;
+        //throw new System.NotImplementedException();
+        return UniTask.CompletedTask;
     }
 }

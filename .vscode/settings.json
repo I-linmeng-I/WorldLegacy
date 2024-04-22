@@ -51,5 +51,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "WorldLegacy.sln"
+    "dotnet.defaultSolution": "WorldLegacy.sln",
+    "dotnet.preferCSharpExtension": true
 }
