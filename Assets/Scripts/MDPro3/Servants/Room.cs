@@ -352,7 +352,7 @@ namespace MDPro3
 
         public void OnLoadPuzzle()
         {
-            puzzleContent = Program.I().currentPlot.preload();
+            puzzleContent = Program.I().currentDuelPlot.preload();
             TcpHelper.CtosMessage_LoadPuzzle();
         }
 

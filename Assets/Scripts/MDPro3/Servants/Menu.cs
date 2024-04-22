@@ -33,25 +33,30 @@ namespace MDPro3
             yield return www.SendWebRequest();
             try
             {
-                var result = www.downloadHandler.text;
-                var lines = result.Replace("\r", "").Split('\n');
-                if (Application.version != lines[0])
-                    MessageManager.Cast(InterString.Get("检测到新版本[[?]]。", lines[0]));
+                // var result = www.downloadHandler.text;
+                // var lines = result.Replace("\r", "").Split('\n');
+                // if (Application.version != lines[0])
+                //     MessageManager.Cast(InterString.Get("检测到新版本[[?]]。", lines[0]));
             }
             catch
             {
-                MessageManager.Cast(InterString.Get("检查更新失败！"));
+                // MessageManager.Cast(InterString.Get("检查更新失败！"));
             }
         }
 
+        public void OnStory()
+        {
+            Program.I().ShiftToServant(Program.I().StoryPlot);
+        }
 
         public void OnSolo()
         {
             //Program.I().ShiftToServant(Program.I().solo);
             Type type = Type.GetType("TestPlot");
             var plotInstance = Activator.CreateInstance(type);
-            Program.I().currentPlot = (DuelPlot)plotInstance;
+            Program.I().currentDuelPlot = (DuelPlot)plotInstance;
             Program.I().solo.StartAI(5);
+
         }
         public void OnOnline()
         {

@@ -25,7 +25,8 @@ namespace MDPro3
         public TextureManager texture_;
         public MessageManager message_;
         public TimeLineManager timeline_;
-        public DuelPlot currentPlot;
+        public DuelPlot currentDuelPlot;
+        public StoryPlot StoryPlot;
 
         [Header("Servants")]
         public Menu menu;
@@ -125,6 +126,7 @@ namespace MDPro3
             servants.Add(menu);
             servants.Add(solo);
             servants.Add(online);
+            servants.Add(StoryPlot);
             servants.Add(puzzle);
             servants.Add(replay);
             servants.Add(cutin);

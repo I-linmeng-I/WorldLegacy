@@ -4937,7 +4937,7 @@ namespace MDPro3
                         controller = (uint)LocalPlayer(Program.I().room.puzzleContent.Puzzles[i].playerid),
                         location = (uint)CardLocation.Overlay | (uint)CardLocation.MonsterZone,
                         position = (int)Program.I().room.puzzleContent.Puzzles[i].position,
-                        sequence = 2
+                        sequence = (uint)Program.I().room.puzzleContent.Puzzles[i].sequence
                     });
                     overlay.SetData(Card.Get(Program.I().room.puzzleContent.Puzzles[i].code));
                 }
