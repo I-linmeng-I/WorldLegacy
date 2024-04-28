@@ -1,16 +1,20 @@
 using MDPro3;
 using Naninovel;
 using Naninovel.Commands;
+using Naninovel.UI;
 using System;
 using System.Threading;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using WindBot.Game;
 using static Naninovel.Command;
 
-[CommandAlias("hello")]
-public class HelloWorld : Command
+[CommandAlias("puzzle")]
+public class StartPuzzle : Command
 {
-    public StringParameter Name;
+    public StringParameter DuelPlotName;
+
+    public StringParameter NextScript;
 
     public override UniTask Execute(AsyncToken asyncToken = default)
     {
@@ -21,14 +25,23 @@ public class HelloWorld : Command
         // 2. Switch cameras.
         // var advCamera = GameObject.Find("AdventureModeCamera").GetComponent<Camera>();
         // advCamera.enabled = false;
+        var hidePrinter = new HidePrinter();
+        hidePrinter.Execute(asyncToken).Forget();
+
+        Program.I().StoryPlot.ContinueInputUI.SetActive(false);
+
+        var back = Engine.GetService<IBackgroundManager>();
+        back.RemoveAllActors();
+
+        Type type = Type.GetType(DuelPlotName);
+        var plotInstance = Activator.CreateInstance(type);
+        Program.I().StoryPlot.currentDuelPlot = (GameAI)plotInstance;
+        Program.I().solo.StartAI(5);
+
         var naniCamera = Engine.GetService<ICameraManager>().Camera;
         naniCamera.enabled = false;
 
-        Type type = Type.GetType("TestPlot");
-        var plotInstance = Activator.CreateInstance(type);
-        Program.I().currentDuelPlot = (DuelPlot)plotInstance;
-        Program.I().solo.StartAI(5);
-
+        Program.I().StoryPlot.StartScriptName = NextScript;
         // // 4. Enable Naninovel input.
         // Program.I().gameObject.GetComponent<InputManager>().ProcessInput = false;
         // var inputManager = Engine.GetService<IInputManager>();

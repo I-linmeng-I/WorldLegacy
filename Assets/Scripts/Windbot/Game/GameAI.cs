@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using WindBot.Game.AI;
 using YGOSharp.OCGWrapper.Enums;
+using System;
+using UnityEngine;
+using JetBrains.Annotations;
+using static MDPro3.Room;
 
 namespace WindBot.Game
 {
@@ -13,27 +17,47 @@ namespace WindBot.Game
 
         private Dialogs _dialogs;
 
+        public DuelEventManager eventManager = new DuelEventManager();
+        public DuelEffectManager effectManager = new DuelEffectManager();
+
+        public int step = 0;
+
         // record activated count to prevent infinite actions
         private Dictionary<int, int> _activatedCards;
 
-        public GameAI(GameClient game, Duel duel)
-        {
+        public void InitAI(GameClient game, Duel duel){
             Game = game;
             Duel = duel;
-
+            
             _dialogs = new Dialogs(game);
             _activatedCards = new Dictionary<int, int>();
         }
 
+        virtual public PuzzleContent preload()
+        {
+            return new PuzzleContent();
+        }
+
+        public virtual void OnWin(string textResult){
+            if(textResult == "Win" || MDPro3.Program.I().StoryPlot.StartScriptName == ""){
+                MDPro3.Program.I().ocgcore.returnServant = MDPro3.Program.I().menu;
+            }
+            else{
+                MDPro3.Program.I().ocgcore.returnServant = MDPro3.Program.I().StoryPlot;
+            }
+        }
         /// <summary>
         /// Called when the AI got the error message.
         /// </summary>
-        public void OnRetry()
+        public virtual void OnRetry()
         {
             _dialogs.SendSorry();
         }
 
-        public void OnDeckError(string card)
+        public virtual void updateCard(int flag,ClientCard card){
+        }
+
+        public virtual void OnDeckError(string card)
         {
             _dialogs.SendDeckSorry(card);
         }
@@ -41,7 +65,7 @@ namespace WindBot.Game
         /// <summary>
         /// Called when the AI join the game.
         /// </summary>
-        public void OnJoinGame()
+        public virtual void OnJoinGame()
         {
             _dialogs.SendWelcome();
         }
@@ -49,7 +73,7 @@ namespace WindBot.Game
         /// <summary>
         /// Called when the duel starts.
         /// </summary>
-        public void OnStart()
+        public virtual void OnStart()
         {
             _dialogs.SendDuelStart();
         }
@@ -57,7 +81,7 @@ namespace WindBot.Game
         /// <summary>
         /// Customized called when the AI do something in a duel.
         /// </summary>
-        public void SendCustomChat(int index, params object[] opts)
+        public virtual void SendCustomChat(int index, params object[] opts)
         {
             _dialogs.SendCustomChat(index, opts);
         }
@@ -66,7 +90,7 @@ namespace WindBot.Game
         /// Called when the AI do the rock-paper-scissors.
         /// </summary>
         /// <returns>1 for Scissors, 2 for Rock, 3 for Paper.</returns>
-        public int OnRockPaperScissors()
+        public virtual int OnRockPaperScissors()
         {
             return Executor.OnRockPaperScissors();
         }
@@ -75,7 +99,7 @@ namespace WindBot.Game
         /// Called when the AI won the rock-paper-scissors.
         /// </summary>
         /// <returns>True if the AI should begin first, false otherwise.</returns>
-        public bool OnSelectHand()
+        public virtual bool OnSelectHand()
         {
             return Executor.OnSelectHand();
         }
@@ -83,15 +107,29 @@ namespace WindBot.Game
         /// <summary>
         /// Called when any player draw card.
         /// </summary>
-        public void OnDraw(int player)
+        public virtual void OnDraw(int player)
         {
             Executor.OnDraw(player);
         }
 
         /// <summary>
+        /// 召唤完成，0为通常召唤，1为特殊召唤，2为反转召唤
+        /// </summary>
+        public virtual void OnSummoned(int sumType){
+            
+        }
+
+        /// <summary>
+        /// 召唤中，0为通常召唤，1为特殊召唤，2为反转召唤
+        /// </summary>
+        public virtual void OnSummoning(int sumType){
+            
+        }
+
+        /// <summary>
         /// Called when it's a new turn.
         /// </summary>
-        public void OnNewTurn()
+        public virtual void OnNewTurn()
         {
             _activatedCards.Clear();
             Executor.OnNewTurn();
@@ -100,7 +138,7 @@ namespace WindBot.Game
         /// <summary>
         /// Called when it's a new phase.
         /// </summary>
-        public void OnNewPhase()
+        public virtual void OnNewPhase()
         {
             m_selector.Clear();
             m_position.Clear();
@@ -119,7 +157,7 @@ namespace WindBot.Game
             Executor.OnNewPhase();
         }
 
-        public void OnMove(ClientCard card, int previousControler, int previousLocation, int currentControler, int currentLocation)
+        public virtual void OnMove(ClientCard card, int previousControler, int previousLocation, int currentControler, int currentLocation)
         {
             Executor.OnMove(card, previousControler, previousLocation, currentControler, currentLocation);
         }
@@ -127,7 +165,7 @@ namespace WindBot.Game
         /// <summary>
         /// Called when the AI got attack directly.
         /// </summary>
-        public void OnDirectAttack(ClientCard card)
+        public virtual void OnDirectAttack(ClientCard card)
         {
             _dialogs.SendOnDirectAttack(card.Name);
         }
@@ -137,12 +175,12 @@ namespace WindBot.Game
         /// </summary>
         /// <param name="card">Card who is chained.</param>
         /// <param name="player">Player who is currently chaining.</param>
-        public void OnChaining(ClientCard card, int player)
+        public virtual void OnChaining(ClientCard card, int player)
         {
             Executor.OnChaining(player,card);
         }
 
-        public void OnChainSolved(int chainIndex)
+        public virtual void OnChainSolved(int chainIndex)
         {
             Executor.OnChainSolved(chainIndex);
         }
@@ -150,7 +188,7 @@ namespace WindBot.Game
         /// <summary>
         /// Called when a chain has been solved.
         /// </summary>
-        public void OnChainEnd()
+        public virtual void OnChainEnd()
         {
             m_selector.Clear();
             m_selector_pointer = -1;
@@ -162,7 +200,7 @@ namespace WindBot.Game
         /// </summary>
         /// <param name="player">Player who announce.</param>
         /// <param name="data">Annouced info.</param>
-        public void OnReceivingAnnouce(int player, int data)
+        public virtual void OnReceivingAnnouce(int player, int data)
         {
             Executor.OnReceivingAnnouce(player, data);
         }
@@ -172,7 +210,7 @@ namespace WindBot.Game
         /// </summary>
         /// <param name="battle">Informations about usable cards.</param>
         /// <returns>A new BattlePhaseAction containing the action to do.</returns>
-        public BattlePhaseAction OnSelectBattleCmd(BattlePhase battle)
+        public virtual BattlePhaseAction OnSelectBattleCmd(BattlePhase battle)
         {
             Executor.SetBattle(battle);
             foreach (CardExecutor exec in Executor.Executors)
@@ -254,7 +292,7 @@ namespace WindBot.Game
         /// <param name="hint">The hint message of the select.</param>
         /// <param name="cancelable">True if you can return an empty list.</param>
         /// <returns>A new list containing the selected cards.</returns>
-        public IList<ClientCard> OnSelectCard(IList<ClientCard> cards, int min, int max, int hint, bool cancelable)
+        public virtual IList<ClientCard> OnSelectCard(IList<ClientCard> cards, int min, int max, int hint, bool cancelable)
         {
             // Check for the executor.
             IList<ClientCard> result = Executor.OnSelectCard(cards, min, max, hint, cancelable);
@@ -333,7 +371,7 @@ namespace WindBot.Game
         /// <param name="forced">You can't return -1 if this param is true.</param>
         /// <param name="timing">Current hint timing</param>
         /// <returns>Index of the activated card or -1.</returns>
-        public int OnSelectChain(IList<ClientCard> cards, IList<int> descs, bool forced, int timing = -1)
+        public virtual int OnSelectChain(IList<ClientCard> cards, IList<int> descs, bool forced, int timing = -1)
         {
             Executor.OnSelectChain(cards);
             foreach (CardExecutor exec in Executor.Executors)
@@ -360,7 +398,7 @@ namespace WindBot.Game
         /// <param name="cards">List of available cards.</param>
         /// <param name="counters">List of available counters.</param>
         /// <returns>List of used counters.</returns>
-        public IList<int> OnSelectCounter(int type, int quantity, IList<ClientCard> cards, IList<int> counters)
+        public virtual IList<int> OnSelectCounter(int type, int quantity, IList<ClientCard> cards, IList<int> counters)
         {
             // Always select the first available counters.
             int[] used = new int[counters.Count];
@@ -387,7 +425,7 @@ namespace WindBot.Game
         /// </summary>
         /// <param name="cards">Cards to sort.</param>
         /// <returns>List of sorted cards.</returns>
-        public IList<ClientCard> OnCardSorting(IList<ClientCard> cards)
+        public virtual IList<ClientCard> OnCardSorting(IList<ClientCard> cards)
         {
 
             IList<ClientCard> result = Executor.OnCardSorting(cards);
@@ -404,7 +442,7 @@ namespace WindBot.Game
         /// </summary>
         /// <param name="card">Card to activate.</param>
         /// <returns>True for yes, false for no.</returns>
-        public bool OnSelectEffectYn(ClientCard card, int desc)
+        public virtual bool OnSelectEffectYn(ClientCard card, int desc)
         {
             foreach (CardExecutor exec in Executor.Executors)
             {
@@ -419,7 +457,7 @@ namespace WindBot.Game
         /// </summary>
         /// <param name="main">A lot of informations about the available actions.</param>
         /// <returns>A new MainPhaseAction containing the action to do.</returns>
-        public MainPhaseAction OnSelectIdleCmd(MainPhase main)
+        public virtual MainPhaseAction OnSelectIdleCmd(MainPhase main)
         {
             Executor.SetMain(main);
             foreach (CardExecutor exec in Executor.Executors)
@@ -503,7 +541,7 @@ namespace WindBot.Game
         /// </summary>
         /// <param name="options">List of available options.</param>
         /// <returns>Index of the selected option.</returns>
-        public int OnSelectOption(IList<int> options)
+        public virtual int OnSelectOption(IList<int> options)
         {
             int result = Executor.OnSelectOption(options);
             if (result != -1)
@@ -515,7 +553,7 @@ namespace WindBot.Game
             return 0; // Always select the first option.
         }
 
-        public int OnSelectPlace(int cardId, int player, CardLocation location, int available)
+        public virtual int OnSelectPlace(int cardId, int player, CardLocation location, int available)
         {
             int selector_selected = m_place;
             m_place = 0;
@@ -538,7 +576,7 @@ namespace WindBot.Game
         /// <param name="cardId">Id of the card to position on the field.</param>
         /// <param name="positions">List of available positions.</param>
         /// <returns>Selected position.</returns>
-        public CardPosition OnSelectPosition(int cardId, IList<CardPosition> positions)
+        public virtual CardPosition OnSelectPosition(int cardId, IList<CardPosition> positions)
         {
             CardPosition selector_selected = GetSelectedPosition();
 
@@ -562,7 +600,7 @@ namespace WindBot.Game
         /// <param name="max">Maximum cards.</param>
         /// <param name="mode">True for exact equal.</param>
         /// <returns></returns>
-        public IList<ClientCard> OnSelectSum(IList<ClientCard> cards, int sum, int min, int max, int hint, bool mode)
+        public virtual IList<ClientCard> OnSelectSum(IList<ClientCard> cards, int sum, int min, int max, int hint, bool mode)
         {
             IList<ClientCard> selected = Executor.OnSelectSum(cards, sum, min, max, hint, mode);
             if (selected != null)
@@ -728,7 +766,7 @@ namespace WindBot.Game
         /// <param name="hint">The hint message of the select.</param>
         /// <param name="cancelable">True if you can return an empty list.</param>
         /// <returns>A new list containing the tributed cards.</returns>
-        public IList<ClientCard> OnSelectTribute(IList<ClientCard> cards, int min, int max, int hint, bool cancelable)
+        public virtual IList<ClientCard> OnSelectTribute(IList<ClientCard> cards, int min, int max, int hint, bool cancelable)
         {
             // Always choose the minimum and lowest atk.
             List<ClientCard> sorted = new List<ClientCard>();
@@ -748,7 +786,7 @@ namespace WindBot.Game
         /// </summary>
         /// <param name="desc">Id of the question.</param>
         /// <returns>True for yes, false for no.</returns>
-        public bool OnSelectYesNo(int desc)
+        public virtual bool OnSelectYesNo(int desc)
         {
             if (m_yesno != -1)
                 return m_yesno > 0;
@@ -759,7 +797,7 @@ namespace WindBot.Game
         /// Called when the AI has to select if to continue attacking when replay.
         /// </summary>
         /// <returns>True for yes, false for no.</returns>
-        public bool OnSelectBattleReplay()
+        public virtual bool OnSelectBattleReplay()
         {
             return Executor.OnSelectBattleReplay();
         }
@@ -769,7 +807,7 @@ namespace WindBot.Game
         /// </summary>
         /// <param name="avail">Available card's ids.</param>
         /// <returns>Id of the selected card.</returns>
-        public int OnAnnounceCard(IList<int> avail)
+        public virtual int OnAnnounceCard(IList<int> avail)
         {
             int selected = Executor.OnAnnounceCard(avail);
             if (avail.Contains(selected))
@@ -798,43 +836,43 @@ namespace WindBot.Game
         private int m_selector_pointer = -1;
         private IList<CardRace> m_races = new List<CardRace>();
 
-        public void SelectCard(ClientCard card)
+        public virtual void SelectCard(ClientCard card)
         {
             m_selector_pointer = m_selector.Count();
             m_selector.Add(new CardSelector(card));
         }
 
-        public void SelectCard(IList<ClientCard> cards)
+        public virtual void SelectCard(IList<ClientCard> cards)
         {
             m_selector_pointer = m_selector.Count();
             m_selector.Add(new CardSelector(cards));
         }
 
-        public void SelectCard(int cardId)
+        public virtual void SelectCard(int cardId)
         {
             m_selector_pointer = m_selector.Count();
             m_selector.Add(new CardSelector(cardId));
         }
 
-        public void SelectCard(IList<int> ids)
+        public virtual void SelectCard(IList<int> ids)
         {
             m_selector_pointer = m_selector.Count();
             m_selector.Add(new CardSelector(ids));
         }
 
-        public void SelectCard(params int[] ids)
+        public virtual void SelectCard(params int[] ids)
         {
             m_selector_pointer = m_selector.Count();
             m_selector.Add(new CardSelector(ids));
         }
 
-        public void SelectCard(CardLocation loc)
+        public virtual void SelectCard(CardLocation loc)
         {
             m_selector_pointer = m_selector.Count();
             m_selector.Add(new CardSelector(loc));
         }
 
-        public void SelectNextCard(ClientCard card)
+        public virtual void SelectNextCard(ClientCard card)
         {
             if (m_selector_pointer == -1)
             {
@@ -844,7 +882,7 @@ namespace WindBot.Game
             m_selector.Insert(m_selector_pointer, new CardSelector(card));
         }
 
-        public void SelectNextCard(IList<ClientCard> cards)
+        public virtual void SelectNextCard(IList<ClientCard> cards)
         {
             if (m_selector_pointer == -1)
             {
@@ -854,7 +892,7 @@ namespace WindBot.Game
             m_selector.Insert(m_selector_pointer, new CardSelector(cards));
         }
 
-        public void SelectNextCard(int cardId)
+        public virtual void SelectNextCard(int cardId)
         {
             if (m_selector_pointer == -1)
             {
@@ -864,7 +902,7 @@ namespace WindBot.Game
             m_selector.Insert(m_selector_pointer, new CardSelector(cardId));
         }
 
-        public void SelectNextCard(IList<int> ids)
+        public virtual void SelectNextCard(IList<int> ids)
         {
             if (m_selector_pointer == -1)
             {
@@ -874,7 +912,7 @@ namespace WindBot.Game
             m_selector.Insert(m_selector_pointer, new CardSelector(ids));
         }
 
-        public void SelectNextCard(params int[] ids)
+        public virtual void SelectNextCard(params int[] ids)
         {
             if (m_selector_pointer == -1)
             {
@@ -884,7 +922,7 @@ namespace WindBot.Game
             m_selector.Insert(m_selector_pointer, new CardSelector(ids));
         }
 
-        public void SelectNextCard(CardLocation loc)
+        public virtual void SelectNextCard(CardLocation loc)
         {
             if (m_selector_pointer == -1)
             {
@@ -894,7 +932,7 @@ namespace WindBot.Game
             m_selector.Insert(m_selector_pointer, new CardSelector(loc));
         }
 
-        public void SelectThirdCard(ClientCard card)
+        public virtual void SelectThirdCard(ClientCard card)
         {
             if (m_selector_pointer == -1)
             {
@@ -904,7 +942,7 @@ namespace WindBot.Game
             m_selector.Insert(m_selector_pointer, new CardSelector(card));
         }
 
-        public void SelectThirdCard(IList<ClientCard> cards)
+        public virtual void SelectThirdCard(IList<ClientCard> cards)
         {
             if (m_selector_pointer == -1)
             {
@@ -914,7 +952,7 @@ namespace WindBot.Game
             m_selector.Insert(m_selector_pointer, new CardSelector(cards));
         }
 
-        public void SelectThirdCard(int cardId)
+        public virtual void SelectThirdCard(int cardId)
         {
             if (m_selector_pointer == -1)
             {
@@ -924,7 +962,7 @@ namespace WindBot.Game
             m_selector.Insert(m_selector_pointer, new CardSelector(cardId));
         }
 
-        public void SelectThirdCard(IList<int> ids)
+        public virtual void SelectThirdCard(IList<int> ids)
         {
             if (m_selector_pointer == -1)
             {
@@ -934,7 +972,7 @@ namespace WindBot.Game
             m_selector.Insert(m_selector_pointer, new CardSelector(ids));
         }
 
-        public void SelectThirdCard(params int[] ids)
+        public virtual void SelectThirdCard(params int[] ids)
         {
             if (m_selector_pointer == -1)
             {
@@ -944,7 +982,7 @@ namespace WindBot.Game
             m_selector.Insert(m_selector_pointer, new CardSelector(ids));
         }
 
-        public void SelectThirdCard(CardLocation loc)
+        public virtual void SelectThirdCard(CardLocation loc)
         {
             if (m_selector_pointer == -1)
             {
@@ -954,48 +992,48 @@ namespace WindBot.Game
             m_selector.Insert(m_selector_pointer, new CardSelector(loc));
         }
 
-        public void SelectMaterials(ClientCard card, int hint = 0)
+        public virtual void SelectMaterials(ClientCard card, int hint = 0)
         {
             m_materialSelector = new CardSelector(card);
             m_materialSelectorHint = hint;
         }
 
-        public void SelectMaterials(IList<ClientCard> cards, int hint = 0)
+        public virtual void SelectMaterials(IList<ClientCard> cards, int hint = 0)
         {
             m_materialSelector = new CardSelector(cards);
             m_materialSelectorHint = hint;
         }
 
-        public void SelectMaterials(int cardId, int hint = 0)
+        public virtual void SelectMaterials(int cardId, int hint = 0)
         {
             m_materialSelector = new CardSelector(cardId);
             m_materialSelectorHint = hint;
         }
 
-        public void SelectMaterials(IList<int> ids, int hint = 0)
+        public virtual void SelectMaterials(IList<int> ids, int hint = 0)
         {
             m_materialSelector = new CardSelector(ids);
             m_materialSelectorHint = hint;
         }
 
-        public void SelectMaterials(CardLocation loc, int hint = 0)
+        public virtual void SelectMaterials(CardLocation loc, int hint = 0)
         {
             m_materialSelector = new CardSelector(loc);
             m_materialSelectorHint = hint;
         }
 
-        public void CleanSelectMaterials()
+        public virtual void CleanSelectMaterials()
         {
             m_materialSelector = null;
             m_materialSelectorHint = 0;
         }
 
-        public bool HaveSelectedCards()
+        public virtual bool HaveSelectedCards()
         {
             return m_selector.Count > 0 || m_materialSelector != null;
         }
 
-        public CardSelector GetSelectedCards()
+        public virtual CardSelector GetSelectedCards()
         {
             CardSelector selected = null;
             if (m_selector.Count > 0)
@@ -1006,7 +1044,7 @@ namespace WindBot.Game
             return selected;
         }
 
-        public CardPosition GetSelectedPosition()
+        public virtual CardPosition GetSelectedPosition()
         {
             CardPosition selected = CardPosition.FaceUpAttack;
             if (m_position.Count > 0)
@@ -1017,58 +1055,58 @@ namespace WindBot.Game
             return selected;
         }
 
-        public void SelectPosition(CardPosition pos)
+        public virtual void SelectPosition(CardPosition pos)
         {
             m_position.Add(pos);
         }
 
-        public void SelectPlace(int zones)
+        public virtual void SelectPlace(int zones)
         {
             m_place = zones;
         }
 
-        public void SelectOption(int opt)
+        public virtual void SelectOption(int opt)
         {
             m_option = opt;
         }
 
-        public void SelectNumber(int number)
+        public virtual void SelectNumber(int number)
         {
             m_number = number;
         }
 
-        public void SelectAttribute(CardAttribute attribute)
+        public virtual void SelectAttribute(CardAttribute attribute)
         {
             m_attributes.Clear();
             m_attributes.Add(attribute);
         }
 
-        public void SelectAttributes(CardAttribute[] attributes)
+        public virtual void SelectAttributes(CardAttribute[] attributes)
         {
             m_attributes.Clear();
             foreach (CardAttribute attribute in attributes)
                 m_attributes.Add(attribute);
         }
 
-        public void SelectRace(CardRace race)
+        public virtual void SelectRace(CardRace race)
         {
             m_races.Clear();
             m_races.Add(race);
         }
 
-        public void SelectRaces(CardRace[] races)
+        public virtual void SelectRaces(CardRace[] races)
         {
             m_races.Clear();
             foreach (CardRace race in races)
                 m_races.Add(race);
         }
 
-        public void SelectAnnounceID(int id)
+        public virtual void SelectAnnounceID(int id)
         {
             m_announce = id;
         }
 
-        public void SelectYesNo(bool opt)
+        public virtual void SelectYesNo(bool opt)
         {
             m_yesno = opt ? 1 : 0;
         }
@@ -1078,7 +1116,7 @@ namespace WindBot.Game
         /// </summary>
         /// <param name="numbers">List of available numbers.</param>
         /// <returns>Index of the selected number.</returns>
-        public int OnAnnounceNumber(IList<int> numbers)
+        public virtual int OnAnnounceNumber(IList<int> numbers)
         {
             if (numbers.Contains(m_number))
                 return numbers.IndexOf(m_number);
@@ -1116,7 +1154,7 @@ namespace WindBot.Game
             return races; // Returns the first available Races.
         }
 
-        public BattlePhaseAction Attack(ClientCard attacker, ClientCard defender)
+        public virtual BattlePhaseAction Attack(ClientCard attacker, ClientCard defender)
         {
             Executor.SetCard(0, attacker, -1);
             if (defender != null)
@@ -1134,12 +1172,12 @@ namespace WindBot.Game
             return new BattlePhaseAction(BattlePhaseAction.BattleAction.Attack, attacker.ActionIndex);
         }
 
-        public BattlePhaseAction ToEndPhase()
+        public virtual BattlePhaseAction ToEndPhase()
         {
             _dialogs.SendEndTurn();
             return new BattlePhaseAction(BattlePhaseAction.BattleAction.ToEndPhase);
         }
-        public BattlePhaseAction ToMainPhase2()
+        public virtual BattlePhaseAction ToMainPhase2()
         {
             return new BattlePhaseAction(BattlePhaseAction.BattleAction.ToMainPhaseTwo);
         }

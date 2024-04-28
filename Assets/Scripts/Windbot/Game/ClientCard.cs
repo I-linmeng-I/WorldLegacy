@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using YGOSharp.OCGWrapper;
@@ -90,7 +91,7 @@ namespace WindBot.Game
             }
         }
 
-        public void Update(BinaryReader packet, Duel duel)
+        public int Update(BinaryReader packet, Duel duel )
         {
             int flag = packet.ReadInt32();
             if ((flag & (int)Query.Code) != 0)
@@ -165,6 +166,8 @@ namespace WindBot.Game
                 LinkCount = packet.ReadInt32();
                 LinkMarker = packet.ReadInt32();
             }
+
+            return flag;
         }
 
         public void ClearCardTargets()

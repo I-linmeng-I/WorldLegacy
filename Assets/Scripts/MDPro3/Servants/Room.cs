@@ -71,6 +71,7 @@ namespace MDPro3
             public List<puzzle_pointer> Puzzles = new List<puzzle_pointer>();
         }
         public class puzzle_pointer{
+            public bool visible = true;
             public int code = 0;
             public sbyte location = 0;
             public sbyte sequence = 0;
@@ -79,7 +80,8 @@ namespace MDPro3
             public sbyte playerid = 0;
             public sbyte proc = 0 ;
 
-            public puzzle_pointer(int code,sbyte owner, sbyte playerid, sbyte location, sbyte sequence, sbyte position ,sbyte proc =0){
+            public puzzle_pointer(int code,sbyte owner, sbyte playerid, sbyte location, sbyte sequence, sbyte position ,bool visible = true,sbyte proc =0){
+                this.visible = visible;
                 this.code = code;
                 this.owner = owner;
                 this.playerid = playerid;
@@ -352,7 +354,7 @@ namespace MDPro3
 
         public void OnLoadPuzzle()
         {
-            puzzleContent = Program.I().currentDuelPlot.preload();
+            puzzleContent = Program.I().StoryPlot.currentDuelPlot.preload();
             TcpHelper.CtosMessage_LoadPuzzle();
         }
 

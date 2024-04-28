@@ -4923,7 +4923,6 @@ namespace MDPro3
                     GCS_Create(p);
                     card = GCS_Get(p);
                     card.Move(p);
-                    card.SetData(Card.Get(Program.I().room.puzzleContent.Puzzles[i].code));
                 }
                 else if(card.p.location == (uint)CardLocation.MonsterZone){
                     GameCard overlay = GCS_Create(new GPS{
@@ -4940,6 +4939,10 @@ namespace MDPro3
                         sequence = (uint)Program.I().room.puzzleContent.Puzzles[i].sequence
                     });
                     overlay.SetData(Card.Get(Program.I().room.puzzleContent.Puzzles[i].code));
+                    return;
+                }
+                if(Program.I().room.puzzleContent.Puzzles[i].visible){
+                    card.SetData(Card.Get(Program.I().room.puzzleContent.Puzzles[i].code));
                 }
             }
         }

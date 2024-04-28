@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 using System;
 using UnityEngine.Networking;
 using YgomSystem.LocalFileSystem.Internal;
+using WindBot.Game;
 
 namespace MDPro3
 {
@@ -54,7 +55,7 @@ namespace MDPro3
             //Program.I().ShiftToServant(Program.I().solo);
             Type type = Type.GetType("TestPlot");
             var plotInstance = Activator.CreateInstance(type);
-            Program.I().currentDuelPlot = (DuelPlot)plotInstance;
+            Program.I().StoryPlot.currentDuelPlot = (GameAI)plotInstance;
             Program.I().solo.StartAI(5);
 
         }

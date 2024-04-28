@@ -146,6 +146,12 @@ MonoBehaviour:
     - name: TestDuelDialogue
       pathPrefix: Scripts
       guid: b8e19def10811ca4882ddc40318d126f
+    - name: test2
+      pathPrefix: Scripts
+      guid: e69af2a75ba6c15419f09eb821adc00a
+    - name: test1
+      pathPrefix: Scripts
+      guid: 4a3aae75815b4fe46ad47a8c0b12cfef
   - Id: Backgrounds/aea6f3d3-89b1-4bbd-999e-af8a48180595
     Resources:
     - name: bg1

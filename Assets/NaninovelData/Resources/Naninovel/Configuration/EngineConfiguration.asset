@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GeneratedDataPath: NaninovelData
   OverrideObjectsLayer: 1
-  ObjectsLayer: 3
+  ObjectsLayer: 4
   AsyncExceptionLogType: 0
   TypeAssemblies:
   - Assembly-CSharp
