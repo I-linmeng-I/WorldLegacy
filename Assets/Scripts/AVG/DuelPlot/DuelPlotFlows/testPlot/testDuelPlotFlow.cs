@@ -38,13 +38,15 @@ public class TestDuelPlotAI : GameAI
             new puzzle_pointer(18964575, 1, 1, (sbyte)CardLocation.Deck, 0, (sbyte)CardPosition.FaceUpAttack ,false)
         };
 
-        //注册效果
-        eventManager.AddEventAndEffect("EVENT_SUMMON_SUCCESS", Effect1, effectManager);
+        //注册演出效果
+        eventManager.AddEventEffect("EVENT_SUMMON_SUCCESS",Effect1);
 
         return puzzleContent;
     }
 
     public void Effect1(params object[] args){
-        DuelEffectFunction.StartDialog("test1");
+        if((int)args[0] == 1){
+            DuelEffectFunction.StartDialog("test1");
+        }
     }
 }

@@ -18,7 +18,6 @@ namespace WindBot.Game
         private Dialogs _dialogs;
 
         public DuelEventManager eventManager = new DuelEventManager();
-        public DuelEffectManager effectManager = new DuelEffectManager();
 
         public int step = 0;
 
@@ -116,7 +115,7 @@ namespace WindBot.Game
         /// 召唤完成，0为通常召唤，1为特殊召唤，2为反转召唤
         /// </summary>
         public virtual void OnSummoned(int sumType){
-            
+            eventManager.TriggerEvent("EVENT_SUMMON_SUCCESS",sumType,Duel.LastSummonedCards);
         }
 
         /// <summary>

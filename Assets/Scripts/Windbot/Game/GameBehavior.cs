@@ -1942,8 +1942,8 @@ namespace WindBot.Game
             {
                 _duel.LastSummonedCards.Add(card);
             }
-            _duel.SummoningCards.Clear();
             _ai.OnSummoned(0);
+            _duel.SummoningCards.Clear();
         }
 
         private void OnSpSummoning(BinaryReader packet)
@@ -1968,8 +1968,8 @@ namespace WindBot.Game
                 card.IsSpecialSummoned = true;
                 _duel.LastSummonedCards.Add(card);
             }
-            _duel.SummoningCards.Clear();
             _ai.OnSummoned(1);
+            _duel.SummoningCards.Clear();
         }
 
         private void OnFlipSummoned(BinaryReader packet)
@@ -1978,8 +1978,8 @@ namespace WindBot.Game
             {
                 _duel.LastSummonedCards.Add(card);
             }
-            _duel.SummoningCards.Clear();
             _ai.OnSummoned(2);
+            _duel.SummoningCards.Clear();
         }
 
         private void OnFlipSummoning(BinaryReader packet)
