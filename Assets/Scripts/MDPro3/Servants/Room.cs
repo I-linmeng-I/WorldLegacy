@@ -67,6 +67,7 @@ namespace MDPro3
         public class PuzzleContent{
             public int player1LifePoint = 8000;
             public int player2LifePoint = 8000;
+            public string[] playerName = {"", ""};
             public sbyte attackable = 0;
             public List<puzzle_pointer> Puzzles = new List<puzzle_pointer>();
         }
@@ -1061,11 +1062,17 @@ namespace MDPro3
         }
         public void StocMessage_HsPlayerEnter(BinaryReader r)
         {
+            OnLoadPuzzle();
             AudioManager.PlaySE("SE_ROOM_SITDOWN");
             var name = r.ReadUnicode(20);
             var pos = r.ReadByte() & 3;
             var player = new Player();
-            player.name = name;
+            if(pos>1){
+                player.name = name;
+            }
+            else{
+                player.name = puzzleContent.playerName[pos];
+            }
             player.ready = false;
             players[pos] = player;
             Realize();
@@ -1097,7 +1104,7 @@ namespace MDPro3
             }
             if(pos ==1 ){
                 OnReady();
-                OnLoadPuzzle();
+                // OnLoadPuzzle();
                 OnStart();
             }
         }

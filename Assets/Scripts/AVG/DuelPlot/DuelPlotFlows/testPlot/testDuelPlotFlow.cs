@@ -17,6 +17,8 @@ public class TestDuelPlotAI : GameAI
         puzzleContent.player1LifePoint = 8000;
         puzzleContent.player2LifePoint = 50;
         puzzleContent.attackable = 1;
+        puzzleContent.playerName[0] = "老林蒙";
+        puzzleContent.playerName[1] = "大凡";
         puzzleContent.Puzzles = new List<puzzle_pointer>
         {
             new puzzle_pointer(32807846, 0, 0, (sbyte)CardLocation.SpellZone, 2, (sbyte)CardPosition.FaceDown),
