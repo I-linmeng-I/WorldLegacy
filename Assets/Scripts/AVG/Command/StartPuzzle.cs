@@ -4,7 +4,6 @@ using Naninovel.Commands;
 using Naninovel.UI;
 using System;
 using System.Threading;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using WindBot.Game;
 using static Naninovel.Command;

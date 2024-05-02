@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using SFB;
+// using SFB;
 
 namespace MDPro3
 {
@@ -42,12 +42,12 @@ namespace MDPro3
         static void Export(string[] filePaths)
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
-            NativeFilePicker.ExportMultipleFiles(filePaths, ExportResult);
-#else
-            StandaloneFileBrowser.OpenFolderPanelAsync(InterString.Get("请选择导出目录"), "", false, (string[] paths) =>
-            {
-                ExportFiles(paths, filePaths);
-            });
+//             NativeFilePicker.ExportMultipleFiles(filePaths, ExportResult);
+// #else
+//             StandaloneFileBrowser.OpenFolderPanelAsync(InterString.Get("请选择导出目录"), "", false, (string[] paths) =>
+//             {
+//                 ExportFiles(paths, filePaths);
+//             });
 #endif
         }
 
@@ -67,20 +67,20 @@ namespace MDPro3
 
         static void ChooseFiles()
         {
-            var extensions = new[]
-            {
-                new ExtensionFilter(InterString.Get("所有文件"), "*"),
-                new ExtensionFilter(InterString.Get("卡组码文件"), "ydk"),
-                new ExtensionFilter(InterString.Get("回放文件"), "yrp", "yrp3d"),
-                new ExtensionFilter(InterString.Get("扩展卡文件"), "ypk"),
-                new ExtensionFilter(InterString.Get("数据库文件"), "cdb"),
-                new ExtensionFilter(InterString.Get("字段文件"), "conf"),
-                new ExtensionFilter(InterString.Get("图片文件"), "png", "jpg")
-            };
-            StandaloneFileBrowser.OpenFilePanelAsync(InterString.Get("请选择需要导入的文件"), "", extensions, true, (string[] paths) =>
-            {
-                CopyFilesToGame(paths);
-            });
+            // var extensions = new[]
+            // {
+            //     new ExtensionFilter(InterString.Get("所有文件"), "*"),
+            //     new ExtensionFilter(InterString.Get("卡组码文件"), "ydk"),
+            //     new ExtensionFilter(InterString.Get("回放文件"), "yrp", "yrp3d"),
+            //     new ExtensionFilter(InterString.Get("扩展卡文件"), "ypk"),
+            //     new ExtensionFilter(InterString.Get("数据库文件"), "cdb"),
+            //     new ExtensionFilter(InterString.Get("字段文件"), "conf"),
+            //     new ExtensionFilter(InterString.Get("图片文件"), "png", "jpg")
+            // };
+            // StandaloneFileBrowser.OpenFilePanelAsync(InterString.Get("请选择需要导入的文件"), "", extensions, true, (string[] paths) =>
+            // {
+            //     CopyFilesToGame(paths);
+            // });
         }
 
         static void CopyFilesToGame(IEnumerable<string> files)

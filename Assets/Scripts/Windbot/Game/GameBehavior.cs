@@ -60,12 +60,19 @@ namespace WindBot.Game
 
         public void OnPacket(BinaryReader packet)
         {
+
+            while(MDPro3.Program.I().WaitAI == true){
+                break;//等待mdpro3处理
+            }
             StocMessage id = (StocMessage)packet.ReadByte();
             if (id == StocMessage.GameMsg)
             {
                 GameMessage msg = (GameMessage)packet.ReadByte();
-                if (_messages.ContainsKey(msg))
+                if (_messages.ContainsKey(msg)){
                     _messages[msg](packet);
+                    MDPro3.Program.I().WaitAI = false;
+                    UnityEngine.Debug.Log("切换到主程序处理"+msg);
+                }
                 _lastMessage = msg;
                 return;
             }

@@ -136,6 +136,9 @@ namespace YGOSharp.Network
                         }
                     }
                 }
+                else{
+                    MDPro3.Program.I().WaitAI = false;
+                }
             }
             while (hasReceived);
         }

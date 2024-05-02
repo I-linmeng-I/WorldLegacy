@@ -4,7 +4,6 @@ using Naninovel.Commands;
 using Naninovel.UI;
 using System;
 using System.Threading;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using static Naninovel.Command;
 
@@ -15,6 +14,7 @@ public class ReturnToDuel : Command
     public override UniTask Execute(AsyncToken asyncToken = default)
     {
         Program.I().ExitCurrentServant();
+        Program.I().StopTimeForShow = false;
         return UniTask.CompletedTask;
     }
 }

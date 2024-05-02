@@ -1380,9 +1380,14 @@ namespace MDPro3
                     currentMessage = (GameMessage)currentPackage.Function;
 
                     if (IfMessageImportant(currentPackage))
-                        if (Program.TimePassed() < MessageBeginTime)
+                        if (Program.TimePassed() < MessageBeginTime || Program.I().StopTimeForShow){
                             break;
+                        }
 
+                    if(Program.I().WaitAI)
+                        break;
+
+                    
                     messageIsHandled = true;
                     try
                     {
@@ -1393,6 +1398,8 @@ namespace MDPro3
                         Debug.Log(e);
                     }
                     packages.RemoveAt(0);
+                    Program.I().WaitAI = true;
+                    Debug.Log("ÇÐ»»µ½ai´¦Àí"+(GameMessage)currentMessage);
                 }
                 if (messageIsHandled)
                     if (condition == Condition.Replay)

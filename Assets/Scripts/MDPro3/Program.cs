@@ -28,6 +28,9 @@ namespace MDPro3
         public StoryPlot StoryPlot;
         public DuelStoryPlot duelStoryPlot;
 
+        public bool StopTimeForShow;
+        public bool WaitAI = true;
+
         [Header("Servants")]
         public Menu menu;
         public Solo solo;

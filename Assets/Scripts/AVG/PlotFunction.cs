@@ -44,7 +44,7 @@ public static class DuelEffectFunction
 {
     public static void StartDialog(string name){
         UnityMainThreadDispatcher.Instance().Enqueue(() => {
-            
+            Program.I().StopTimeForShow = true;
             Program.I().duelStoryPlot.StartScriptName = name;
             Program.I().ocgcore.description.Hide();
             Program.I().ShowSubServant(Program.I().duelStoryPlot);
